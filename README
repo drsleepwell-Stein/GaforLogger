@@ -1,0 +1,4 @@
+# GaforLogger
+
+Automatische tägliche Erfassung der GAFOR-Werte (Gebiete 1–84) vom DWD.
+Die Daten werden einmal täglich gespeichert und als Excel-Datei versioniert.
