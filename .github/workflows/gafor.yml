@@ -2,27 +2,45 @@ name: GAFOR Daily Logger
 
 on:
   schedule:
+    # Läuft täglich um 08:00 UTC
     - cron: '0 8 * * *'
-  workflow_dispatch:
+  workflow_dispatch:  # Ermöglicht manuelles Starten
 
 jobs:
-  run:
+  run-gafor:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+    steps:
+      # Repository auschecken
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Python installieren
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - run: pip install -r requirements.txt
+      # Abhängigkeiten installieren
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - run: python src/main.py
+      # GAFOR Script ausführen
+      - name: Run GAFOR logger
+        run: |
+          python src/main.py
 
+      # Excel-Datei nur committen, wenn sie existiert
       - name: Commit Excel
         run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add data/gafor_log.xlsx
-          git commit -m "Daily GAFOR update" || echo "No changes"
-          git push
+          if [ -f data/gafor_log.xlsx ]; then
+            git config user.name "github-actions"
+            git config user.email "actions@github.com"
+            git add data/gafor_log.xlsx
+            git commit -m "Daily GAFOR update" || echo "No changes"
+            git push
+          else
+            echo "Excel file does not exist yet. Skipping commit."
+          fi
