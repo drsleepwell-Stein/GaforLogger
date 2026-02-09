@@ -5,6 +5,9 @@ on:
     - cron: '0 8 * * *'   # täglich um 08:00 UTC
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   run-gafor:
     runs-on: ubuntu-latest
